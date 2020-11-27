@@ -1,0 +1,28 @@
+{
+  "name": "jba-data-challenge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seeding": "psql -f ./db/seed.sql && node file-reading.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lancaster-coder1991/jba-data-challenge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lancaster-coder1991/jba-data-challenge/issues"
+  },
+  "homepage": "https://github.com/lancaster-coder1991/jba-data-challenge#readme",
+  "dependencies": {
+    "jest": "^26.6.3",
+    "nodefs": "0.0.2",
+    "pg": "^8.5.1",
+    "pgtools": "^0.3.0",
+    "tools": "0.0.0"
+  }
+}
