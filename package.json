@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "seeding": "psql -f ./db/seed.sql && node file-reading.js"
+    "seeding": "psql -f ./db/seed.sql && node file-reading.js ./data/cru-ts-2-10.1991-2000-cutdown.pre"
   },
   "repository": {
     "type": "git",
