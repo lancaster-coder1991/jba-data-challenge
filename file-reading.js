@@ -4,10 +4,10 @@ const format = require("pg-format"); //require pg format to easily insert multip
 
 //Create a new instance of the client object with details of local db - details would need to be changed depending on the server
 const client = new Client({
-  user: "george",
+  user: process.argv[3],
   host: "localhost",
   database: "precipitation_data",
-  password: "georgescott123",
+  password: process.argv[4],
   port: 5432,
 });
 
@@ -66,6 +66,7 @@ fs.readFile(process.argv[2], "utf8", (err, contents) => {
           dataToWrite
         )
       );
+      console.log("Success! The database has been populated.");
       client.end();
     };
 

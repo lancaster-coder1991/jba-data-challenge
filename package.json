@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "seeding": "psql -f ./db/seed.sql && node file-reading.js ./data/cru-ts-2-10.1991-2000-cutdown.pre"
+    "createdb": "psql -f ./db/seed.sql",
+    "seeding": "psql -f ./db/seed.sql && node file-reading.js ./data/cru-ts-2-10.1991-2000-cutdown.pre george georgescott123"
   },
   "repository": {
     "type": "git",
@@ -19,7 +20,7 @@
   },
   "homepage": "https://github.com/lancaster-coder1991/jba-data-challenge#readme",
   "dependencies": {
-    "jest": "^26.6.3",
+    "fs": "0.0.1-security",
     "nodefs": "0.0.2",
     "pg": "^8.5.1",
     "pg-format": "^1.0.4",
