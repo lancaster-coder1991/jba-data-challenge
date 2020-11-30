@@ -5,6 +5,7 @@ CREATE DATABASE precipitation_data;
 \c precipitation_data;
 
 CREATE TABLE meta_data(
+    meta_id SERIAL PRIMARY KEY,
     header VARCHAR,
     units VARCHAR,
     vers VARCHAR,
@@ -17,5 +18,6 @@ CREATE TABLE precipitation(
     Xref INT,
     Yref INT,
     calendarmonth date,
-    val INT
+    val INT,
+    meta_id INT REFERENCES meta_data(meta_id)
 );

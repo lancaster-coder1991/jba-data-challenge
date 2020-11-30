@@ -17,6 +17,7 @@ fs.readFile(
   "./data/cru-ts-2-10.1991-2000-cutdown.pre",
   "utf8",
   (err, contents) => {
+    console.log(process.argv);
     const dataArr = contents.split(/(Grid-ref(.*\n){11})/g); //split contents into an array of grid-ref strings
 
     const metaData = dataArr[0]; //Separate the metadata at the top of the original file
@@ -42,7 +43,7 @@ fs.readFile(
             const tableRow = [xRef, yRef];
             const month = index + 1;
             const year = i + 1991;
-            tableRow.push(`${month}/1/${year}`, value);
+            tableRow.push(`${month}/1/${year}`, value, 1);
             returnArrs.push(tableRow);
           });
         }
@@ -50,46 +51,23 @@ fs.readFile(
       })
       .flat();
 
-    client
-      .query(
+    const executeQueries = async () => {
+      await client.query(
         "INSERT INTO meta_data(header, units, vers, coords, refs) VALUES ($1, $2, $3, $4, $5)",
         metaRows
-      )
-      .then(() => {
-        return client.query(
-          format(
-            "INSERT INTO precipitation(xref, yref, calendarmonth, val) VALUES %L",
-            dataToWrite
-          )
-        );
-      })
-      .then(() => {
-        client.end();
-      })
-      .catch((err) => {
-        console.log(err);
-        client.end();
-      });
+      );
+      await client.query(
+        format(
+          "INSERT INTO precipitation(xref, yref, calendarmonth, val, meta_id) VALUES %L",
+          dataToWrite
+        )
+      );
+      client.end();
+    };
+
+    executeQueries().catch((err) => {
+      console.log(err);
+      client.end();
+    });
   }
 );
-
-// client
-// .query(
-//   "INSERT INTO meta_data(header, units, vers, coords, refs) VALUES ($1, $2, $3, $4, $5)",
-//   metaRows
-// )
-// .then(() => {
-//   return client.query(
-//     format(
-//       "INSERT INTO precipitation(xref, yref, calendarmonth, val) VALUES %L",
-//       dataToWrite
-//     )
-//   );
-// })
-// .then(() => {
-//   client.end();
-// })
-// .catch((err) => {
-//   console.log(err);
-//   client.end();
-// });
