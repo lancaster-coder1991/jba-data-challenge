@@ -17,11 +17,13 @@ fs.readFile(
   "./data/cru-ts-2-10.1991-2000-cutdown.pre",
   "utf8",
   (err, contents) => {
-    //split contents into an array of grid-ref strings
-    const dataArr = contents.split(/(Grid-ref(.*\n){11})/g);
+    const dataArr = contents.split(/(Grid-ref(.*\n){11})/g); //split contents into an array of grid-ref strings
+
     const metaData = dataArr[0]; //Separate the metadata at the top of the original file
+    const metaRows = metaData.split(/\n/g).filter((val) => val); //Split this data into rows based on line breaks for insertion into different columns and filter out blank values that can be created by matching on line breaks
+
     const data = dataArr.slice(1).filter((gridref) => gridref.length > 100);
-    //the regex above isn't working perfectly and outputting the last line of each block into it's own element - not sure why!
+    //filter out blank values which can be created by regex matching on line breaks
 
     //split each gridref block into an array element per row of text
     const segmentedData = [];
@@ -50,16 +52,44 @@ fs.readFile(
 
     client
       .query(
-        format(
-          "INSERT INTO precipitation(xref, yref, calendarmonth, val) VALUES %L",
-          dataToWrite
-        )
+        "INSERT INTO meta_data(header, units, vers, coords, refs) VALUES ($1, $2, $3, $4, $5)",
+        metaRows
       )
+      .then(() => {
+        return client.query(
+          format(
+            "INSERT INTO precipitation(xref, yref, calendarmonth, val) VALUES %L",
+            dataToWrite
+          )
+        );
+      })
       .then(() => {
         client.end();
       })
       .catch((err) => {
         console.log(err);
+        client.end();
       });
   }
 );
+
+// client
+// .query(
+//   "INSERT INTO meta_data(header, units, vers, coords, refs) VALUES ($1, $2, $3, $4, $5)",
+//   metaRows
+// )
+// .then(() => {
+//   return client.query(
+//     format(
+//       "INSERT INTO precipitation(xref, yref, calendarmonth, val) VALUES %L",
+//       dataToWrite
+//     )
+//   );
+// })
+// .then(() => {
+//   client.end();
+// })
+// .catch((err) => {
+//   console.log(err);
+//   client.end();
+// });

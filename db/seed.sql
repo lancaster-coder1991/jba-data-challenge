@@ -7,9 +7,10 @@ CREATE DATABASE precipitation_data;
 CREATE TABLE meta_data(
     header VARCHAR,
     units VARCHAR,
+    vers VARCHAR,
     coords VARCHAR,
-    refs VARCHAR,
-)
+    refs VARCHAR
+);
 
 CREATE TABLE precipitation(
     entry_id SERIAL PRIMARY KEY,
