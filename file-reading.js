@@ -1,5 +1,6 @@
 const fs = require("fs");
 const { Client } = require("pg");
+const format = require("pg-format");
 
 const client = new Client({
   user: "george",
@@ -12,7 +13,7 @@ const client = new Client({
 client.connect();
 
 //Read the original file contents using nodefs
-exports.dataToWrite = fs.readFile(
+fs.readFile(
   "./data/cru-ts-2-10.1991-2000-cutdown.pre",
   "utf8",
   (err, contents) => {
@@ -47,27 +48,18 @@ exports.dataToWrite = fs.readFile(
       })
       .flat();
 
-    sqlPromises = [];
-
-    dataToWrite.forEach((row) => {
-      sqlPromises.push(
-        client.query(
-          "INSERT INTO precipitation(xref, yref, calendarmonth, val) VALUES($1, $2, $3, $4) RETURNING *;",
-          row
+    client
+      .query(
+        format(
+          "INSERT INTO precipitation(xref, yref, calendarmonth, val) VALUES %L",
+          dataToWrite
         )
-      );
-    });
-    //next step - investigate using pg-promises to execute the promise.all, as it looks like this is required
-    console.log(sqlPromises);
-
-    // Promise.all(sqlPromises)
-    //   .then((response) => {
-    //     console.log(response.data[0]);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-
-    client.end();
+      )
+      .then(() => {
+        client.end();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 );
